@@ -102,7 +102,7 @@ if query and query.strip():
             }
             
             rpc_url = f"{SUPABASE_URL}/rest/v1/rpc/match_images"
-            response = requests.post(rpc_url, headers=headers, json=payload)
+            response = requests.post(rpc_url, headers=headers, json=payload, timeout=20)
             
             if response.status_code == 200:
                 results = response.json()
