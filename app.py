@@ -88,20 +88,43 @@ def show_detail_popup(row):
     st.caption(f"클라우드 주소: {img_url} | 유사도: {similarity:.2f}%")
 
 # Sidebar settings
-st.sidebar.title("🛠️ UI 설정")
+st.sidebar.title("🔍 Search Options")
+search_mode = st.sidebar.radio("검색 방식", ["📝 텍스트로 검색", "🖼️ 이미지로 검색"])
+
 num_results = st.sidebar.slider("검색 결과 개수", min_value=12, max_value=300, value=60, step=12)
 grid_columns = st.sidebar.select_slider("그리드 단수 (Columns)", options=[2, 3, 4, 5, 6], value=4)
 
 st.title("SEOP ARCHIVE : Semantic Search 🏛️")
-st.caption("AI 기반 클라우드 건축 이미지 아카이브 : 자연어로 원하는 분위기를 찾아보세요")
+st.caption("AI 기반 클라우드 건축 이미지 아카이브 : 사진 한 장으로 유사한 디자인을 찾아보세요")
 
-query = st.text_input("검색어를 입력하세요:", placeholder="예: 주변에 숲이 있고 따뜻한 무드의 주택 조감도")
+query_text = ""
+if search_mode == "📝 텍스트로 검색":
+    query = st.text_input("검색어를 입력하세요:", placeholder="예: 주변에 숲이 있고 따뜻한 무드의 주택 조감도")
+    if query:
+        query_text = query
+else:
+    uploaded_file = st.file_uploader("참고할 이미지를 업로드하세요", type=["jpg", "jpeg", "png"])
+    if uploaded_file:
+        st.image(uploaded_file, caption="업로드된 기준 이미지", width=300)
+        if st.button("유사 이미지 검색"):
+            with st.spinner("이미지 분석 중..."):
+                try:
+                    img = Image.open(uploaded_file)
+                    vision_model = genai.GenerativeModel('gemini-1.5-flash')
+                    response = vision_model.generate_content([
+                        "Describe this architecture image in detail, focusing on materials, lighting, style, and atmosphere for semantic search.",
+                        img
+                    ])
+                    query_text = response.text
+                    st.info(f"🔍 **이미지 분석:** {query_text[:100]}...")
+                except Exception as e:
+                    st.error(f"이미지 분석 실패: {e}")
 
-if query and query.strip():
+if query_text:
     with st.spinner("클라우드 벡터 공간 검색 중..."):
         try:
             # 1. Get query embedding
-            query_emb = get_embedding(query)
+            query_emb = get_embedding(query_text)
             
             # 2. Call Supabase RPC function
             headers = {
