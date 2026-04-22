@@ -111,19 +111,17 @@ else:
                 try:
                     img = Image.open(uploaded_file)
                     try:
+                        # 1순위: 1.5 flash
                         vision_model = genai.GenerativeModel('gemini-1.5-flash')
                         response = vision_model.generate_content([
-                            "Describe this architecture image in detail, focusing on materials, lighting, style, and atmosphere for semantic search.",
+                            "Describe this architecture image in detail for semantic search.",
                             img
                         ])
-                    except Exception:
-                        # Fallback for older API versions
-                        vision_model = genai.GenerativeModel('gemini-pro-vision')
-                        response = vision_model.generate_content([
-                            "Describe this architecture image in detail, focusing on materials, lighting, style, and atmosphere for semantic search.",
-                            img
-                        ])
-                    query_text = response.text
+                        query_text = response.text
+                    except Exception as model_err:
+                        # 에러 발생 시 사용 가능한 모델 목록을 추출하여 표시
+                        available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_methods]
+                        raise Exception(f"모델 로드 실패. 사용 가능 모델: {available_models}. 원본 에러: {model_err}")
                     st.info(f"🔍 **이미지 분석:** {query_text[:100]}...")
                 except Exception as e:
                     st.error(f"이미지 분석 실패: {e}")
