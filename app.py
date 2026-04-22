@@ -177,26 +177,35 @@ else:
                     optimized_img = resize_image(raw_img)
                     
                     vision_model = genai.GenerativeModel('gemini-2.5-flash')
+                    # 분위기와 색감을 최우선으로 분석하는 프롬프트
                     prompt = """
-                    이 건축 이미지를 상세히 분석하여 한국어로 설명해줘.
-                    특히 다음 요소들에 집중해서 설명해줘:
-                    1. 시간대와 조명: (예: 노을이 지는 골든아워, 밤, 밝은 낮)
-                    2. 전체적인 분위기와 색감: (예: 따뜻하고 오렌지빛 도는 분위기, 차갑고 도시적인 느낌)
-                    3. 건축물의 형태와 재료: (예: 목재 마감, 유리 커튼월, 노출 콘크리트)
+                    이 건축 이미지의 '분위기'와 '조명'을 중심으로 분석해줘.
                     
-                    검색 엔진이 가장 유사한 분위기를 찾을 수 있도록 아주 구체적으로 묘사해줘.
+                    다음 순서로 상세히 설명해줘:
+                    1. 지배적인 색상과 조명 상태 (예: 강렬한 주황색 노을, 황금빛 골든아워, 부드러운 저녁 빛)
+                    2. 전체적인 무드와 시간대 (예: 몽환적인 석양 분위기, 평화로운 해질녘)
+                    3. 건축물의 대략적인 특징과 재료 (예: 현대적인 대규모 건물, 유리와 금속)
+                    
+                    한국어로 답해줘.
                     """
                     response = vision_model.generate_content([prompt, optimized_img])
                     query_text = response.text
                     
-                    # 검색 성능 강화를 위한 영어 키워드 보강
-                    enhanced_query = query_text
+                    # 무드 키워드 가중치 부여 로직 (검색어 맨 앞에 강력한 반복)
+                    mood_prefix = ""
                     if any(word in query_text for word in ["노을", "석양", "해질녘", "골든아워"]):
-                        enhanced_query += " (Sunset, Golden hour, Warm lighting, Evening atmosphere, Dusk)"
-                    if any(word in query_text for word in ["밤", "야경", "어두운"]):
-                        enhanced_query += " (Night view, Dark, Artificial lighting, Evening scene)"
+                        mood_prefix = "Sunset Golden-hour Warm-lighting Orange-sky Sunset Golden-hour "
+                    elif any(word in query_text for word in ["밤", "야경"]):
+                        mood_prefix = "Night-view Dark-atmosphere Evening-lighting Night-view "
+                    elif any(word in query_text for word in ["푸른", "낮", "맑은"]):
+                        mood_prefix = "Clear-sky Bright-daylight Blue-sky "
+                        
+                    # 최종 쿼리: [무드 접두어 반복] + [상세 분석 텍스트]
+                    enhanced_query = mood_prefix + query_text
+
+                    st.success(f"🔍 **AI 분위기 분석 완료:**\n\n{query_text}")
                     
-                    st.success(f"🔍 **AI 이미지 분석 완료:**\n\n{query_text}")
+                    # 보강된 쿼리로 검색 실행
                     perform_search(enhanced_query)
                 except Exception as e:
                     st.error(f"이미지 분석 실패: {e}")
