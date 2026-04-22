@@ -31,8 +31,22 @@ API_KEY = get_secret("GEMINI_API_KEY")
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_KEY = get_secret("SUPABASE_KEY")
 
-if not API_KEY or not SUPABASE_URL or not SUPABASE_KEY:
-    st.error("🔑 API 키 또는 설정값이 누락되었습니다. Streamlit Cloud의 Secrets 설정을 확인해주세요.")
+missing_keys = []
+if not API_KEY: missing_keys.append("GEMINI_API_KEY")
+if not SUPABASE_URL: missing_keys.append("SUPABASE_URL")
+if not SUPABASE_KEY: missing_keys.append("SUPABASE_KEY")
+
+if missing_keys:
+    st.error(f"🔑 설정값이 누락되었습니다: {', '.join(missing_keys)}")
+    st.info("""
+    **해결 방법:**
+    Streamlit Cloud의 **Settings > Secrets**에 아래 형식을 맞춰 입력해주세요:
+    ```toml
+    GEMINI_API_KEY = \"your_api_key\"
+    SUPABASE_URL = \"your_supabase_url\"
+    SUPABASE_KEY = \"your_supabase_key\"
+    ```
+    """)
     st.stop()
 
 genai.configure(api_key=API_KEY)

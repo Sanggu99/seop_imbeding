@@ -24,8 +24,12 @@ SUPABASE_KEY = get_secret("SUPABASE_KEY")
 
 @st.cache_resource
 def load_db():
-    if not SUPABASE_URL or not SUPABASE_KEY:
-        st.warning("⚠️ SUPABASE_URL 또는 SUPABASE_KEY가 설정되지 않았습니다.")
+    missing = []
+    if not SUPABASE_URL: missing.append("SUPABASE_URL")
+    if not SUPABASE_KEY: missing.append("SUPABASE_KEY")
+    
+    if missing:
+        st.warning(f"⚠️ 설정값이 누락되었습니다: {', '.join(missing)}")
         return None
     headers = {
         "apikey": SUPABASE_KEY,
