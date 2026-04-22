@@ -174,11 +174,9 @@ else:
             with st.spinner("이미지 분석 중... (약 5~10초 소요)"):
                 try:
                     raw_img = Image.open(uploaded_file)
-                    # 리사이징하여 속도 향상 (9.9MB -> 최적화)
                     optimized_img = resize_image(raw_img)
                     
                     vision_model = genai.GenerativeModel('gemini-2.5-flash')
-                    # 노을, 조명 등 분위기 중심의 한국어 분석 요청
                     prompt = """
                     이 건축 이미지를 상세히 분석하여 한국어로 설명해줘.
                     특히 다음 요소들에 집중해서 설명해줘:
@@ -190,9 +188,19 @@ else:
                     """
                     response = vision_model.generate_content([prompt, optimized_img])
                     query_text = response.text
-                    st.success(f"🔍 **AI 이미지 분석 완료:**\n\n{query_text}")
                     
-                    # 분석 완료 후 바로 검색 실행
-                    perform_search(query_text)
+                    # 검색 성능 강화를 위한 영어 키워드 보강
+                    enhanced_query = query_text
+                    if any(word in query_text for word in ["노을", "석양", "해질녘", "골든아워"]):
+                        enhanced_query += " (Sunset, Golden hour, Warm lighting, Evening atmosphere, Dusk)"
+                    if any(word in query_text for word in ["밤", "야경", "어두운"]):
+                        enhanced_query += " (Night view, Dark, Artificial lighting, Evening scene)"
+                    
+                    st.success(f"🔍 **AI 이미지 분석 완료:**\n\n{query_text}")
+                    perform_search(enhanced_query)
                 except Exception as e:
                     st.error(f"이미지 분석 실패: {e}")
+
+# Footer
+st.divider()
+st.caption("© 2024 SEOP Architecture AI Archive. Powered by Gemini & Supabase.")
