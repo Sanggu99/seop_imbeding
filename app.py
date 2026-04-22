@@ -119,8 +119,11 @@ else:
                         ])
                         query_text = response.text
                     except Exception as model_err:
-                        # 에러 발생 시 사용 가능한 모델 목록을 추출하여 표시
-                        available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_methods]
+                        # 심플하게 모델 이름만 나열
+                        try:
+                            available_models = [m.name for m in genai.list_models()]
+                        except:
+                            available_models = "목록 추출 실패"
                         raise Exception(f"모델 로드 실패. 사용 가능 모델: {available_models}. 원본 에러: {model_err}")
                     st.info(f"🔍 **이미지 분석:** {query_text[:100]}...")
                 except Exception as e:
