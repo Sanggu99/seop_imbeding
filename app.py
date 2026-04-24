@@ -16,7 +16,13 @@ st.set_page_config(page_title="SEOP ARCHIVE", layout="wide")
 # Custom CSS for cleaner UI
 st.markdown("""
 <style>
-    .block-container { padding-top: 3rem; }
+    /* 메인 콘텐츠 상단 여백 최소화 */
+    .block-container { padding-top: 1rem; padding-bottom: 0rem; }
+    /* 사이드바 상단 여백 최소화 */
+    [data-testid="stSidebarUserContent"] { padding-top: 1rem; }
+    /* 상단 헤더 영역 높이 조절 */
+    header { visibility: hidden; height: 0px; }
+    
     .stImage { border-radius: 12px; }
     div[data-testid="stExpander"] { border: none; box-shadow: none; }
 </style>
