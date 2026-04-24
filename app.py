@@ -159,7 +159,10 @@ num_results = st.sidebar.slider("검색 결과 개수", min_value=12, max_value=
 grid_columns = st.sidebar.select_slider("그리드 단수 (Columns)", options=[2, 3, 4, 5, 6], value=4)
 
 st.title("SEOP ARCHIVE : Semantic Search 🏛️")
-st.caption("AI 기반 클라우드 건축 이미지 아카이브 : 사진 한 장으로 유사한 디자인을 찾아보세요")
+if search_mode == "📝 텍스트로 검색":
+    st.caption("AI 기반 클라우드 건축 이미지 아카이브 : 원하는 디자인을 문장으로 자유롭게 설명해보세요")
+else:
+    st.caption("AI 기반 클라우드 건축 이미지 아카이브 : 사진 한 장으로 유사한 디자인을 찾아보세요")
 
 # Design Identity Section in Sidebar
 st.sidebar.markdown("---")
