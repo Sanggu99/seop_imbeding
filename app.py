@@ -176,7 +176,7 @@ else:
                     raw_img = Image.open(uploaded_file)
                     optimized_img = resize_image(raw_img)
                     
-                    vision_model = genai.GenerativeModel('gemini-1.5-flash')
+                    vision_model = genai.GenerativeModel('gemini-1.5-flash-latest')
                     # 분위기와 색감을 최우선으로 분석하는 프롬프트
                     prompt = """
                     이 건축 이미지의 '분위기'와 '조명'을 중심으로 분석해줘.
