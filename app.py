@@ -162,7 +162,7 @@ st.title("SEOP ARCHIVE : Semantic Search 🏛️")
 st.caption("AI 기반 클라우드 건축 이미지 아카이브 : 사진 한 장으로 유사한 디자인을 찾아보세요")
 
 if search_mode == "📝 텍스트로 검색":
-    query = st.text_input("검색어를 입력하세요:", placeholder="예: 주변에 숲이 있고 따뜻한 무드의 주택 조감도")
+    query = st.text_input("검색어를 입력하세요:", placeholder="예: 화려한 도심 야경 속 커튼월 구조의 초고층 오피스 빌딩")
     if st.button("검색 시작") or (query and len(query) > 1):
         perform_search(query)
 
@@ -176,7 +176,7 @@ else:
                     raw_img = Image.open(uploaded_file)
                     optimized_img = resize_image(raw_img)
                     
-                    vision_model = genai.GenerativeModel('gemini-2.5-flash')
+                    vision_model = genai.GenerativeModel('gemini-1.5-flash')
                     # 분위기와 색감을 최우선으로 분석하는 프롬프트
                     prompt = """
                     이 건축 이미지의 '분위기'와 '조명'을 중심으로 분석해줘.
