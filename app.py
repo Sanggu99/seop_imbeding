@@ -161,6 +161,24 @@ grid_columns = st.sidebar.select_slider("그리드 단수 (Columns)", options=[2
 st.title("SEOP ARCHIVE : Semantic Search 🏛️")
 st.caption("AI 기반 클라우드 건축 이미지 아카이브 : 사진 한 장으로 유사한 디자인을 찾아보세요")
 
+# Design Identity Section in Sidebar
+st.sidebar.markdown("---")
+st.sidebar.subheader("🤖 AI Design Insight")
+st.sidebar.markdown("""
+<div style="background-color: #f0f2f6; padding: 15px; border-radius: 10px; border-left: 5px solid #0078ff;">
+    <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;"><b>Transparency in Openness, Sincerity in Materials</b></p>
+    <p style="font-size: 0.8rem; line-height: 1.4;">
+    SEOP은 <b>유리와 노출 콘크리트</b>의 정직한 물성을 통해 현대적인 미학을 구축합니다. 
+    특히 <b>자연과 도시의 경계를 허무는 개방적인 공간감</b>을 지향하며, 건축을 빛과 환경이 소통하는 플랫폼으로 정의합니다.
+    </p>
+    <div style="margin-top: 10px;">
+        <span style="background: #e1e4e8; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">#유리_커튼월</span>
+        <span style="background: #e1e4e8; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">#노출콘크리트</span>
+        <span style="background: #e1e4e8; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">#자연광</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 if search_mode == "📝 텍스트로 검색":
     query = st.text_input("검색어를 입력하세요:", placeholder="예: 화려한 도심 야경 속 커튼월 구조의 초고층 오피스 빌딩")
     if st.button("검색 시작") or (query and len(query) > 1):
